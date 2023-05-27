@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Sign up</h1><br/>
+    <input type="text" placeholder="email" id="email"/><br/>
+    <input type="text" placeholder="phone" id="phone"/><br/>
+    <input type="password" placeholder="password" id="password"/><br/>
+    <input type="password" placeholder="password" id="password2"/><br/>
+    <input type="button" value="Sign Up" id="signupBtn" onClick="signUp()"/><br/>
+    <br/>
+
+    <h1>Login to get API Key</h1><br/>
+    <input type="text" placeholder="login_email" id="login_email"/><br/>
+    <input type="password" placeholder="login_password" id="login_password"/><br/>
+    <input type="button" value="Login" id="signupBtn" onClick="login()"/><br/>
+
+
+    <p>Thank you for signing up!</p><br/>
+    <p>Your API Key are:</p><br/>
+    <div id="apiKey"></div><br/><br/>
+
+    <h1>Send message</h1><br/>
+    <input type="text" name="apiKey" placeholder="Api Key" id="api_key"/><br/>
+    <input type="tel" placeholder="phone to" id="phoneTo"><br/>
+    <textarea name="" id="message" id="message" rows="5" cols="" placeholder="Your Message"></textarea><br/>
+    <input type="button" value="Send message" onClick="sendMessage()"><br/>
+
+    <script type="text/javascript">
+        async function signUp() {
+            const formData = new FormData();
+            // Access the input fields
+            const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
+            const password = document.getElementById("password").value;
+            const password2 = document.getElementById("password2").value;
+
+            formData.append("user_email", email);
+            formData.append("user_phone", phone);
+            formData.append("user_password", password);
+            formData.append("user_confirm_password", password2);
+
+            const header = {
+                method: 'POST',
+                body: formData
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/', header);
+                const data = await response.json();
+
+                alert("Sign up Success!!")
+            } catch (error) {
+                alert("something went wrong in Sign Up, check console logs");
+                console.log(error);
+            }
+        }
+
+        async function login() {
+            const login_email = document.getElementById("login_email").value;
+            const login_password = document.getElementById("login_password").value;
+            
+            const formData = new FormData();
+            formData.append("user_email", login_email);
+            formData.append("user_password", login_password);
+
+            try {
+
+                const header = {
+                    method: 'POST',
+                    body: formData
+                }
+
+                const response = await fetch("http://localhost:3000/login", header);
+                console.log(response)
+                const data = await response.json()
+                console.log(data)
+
+                document.getElementById('apiKey').textContent = data.user_api_key
+                alert("Log in Success!!")
+
+            } catch (error) {
+                // Handle errors
+                console.error(error);
+            }
+        }
+
+        async function sendMessage() {
+            const formData = new FormData();
+            // Access the input fields
+            const apiKey = document.getElementById("api_key").value;
+            const phoneTo = document.getElementById("phoneTo").value;
+            const message = document.getElementById("message").value;
+
+            formData.append("user_api_key", apiKey);
+            formData.append("sms_message", message);
+            formData.append("sms_to_phone", phoneTo);
+            
+            const header = {
+                method: 'POST',
+                body: formData
+            }
+
+
+            try {
+                const response = await fetch('http://localhost:3000/sms', header);
+                alert("Message sent!")
+            } catch (error) {
+                alert("something went wrong in send message, check console logs");
+                console.log(error);
+            }
+        }
+
+
+
+    </script>
+
+</body>
+</html>
